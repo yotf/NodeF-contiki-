@@ -94,9 +94,18 @@ void OnTxDone( void )
 void OnRxDone( uint8_t *payload, uint16_t size, int8_t rssi, int8_t snr )
 {
   int i;
-  rx_msg_size = size;
-  memcpy(rx_msg_buf, payload, rx_msg_size);
+  int fake_header_size = sizeof(rx_last_rssi_g) + sizeof(rx_last_snr_g);
+  rx_msg_size = size + fake_header_size;
 
+  // resulting content of rx_msg_buf:
+  //rssi 	snr 	fcf 	dstAddr 	srcAddr 	payload
+  //1B    1B         3B      2B        8B        ~150B
+  
+  rx_msg_buf[0]  = rssi;
+  rx_msg_buf[1]  = snr;
+  memcpy(rx_msg_buf + fake_header_size, payload, rx_msg_size - fake_header_size); //hmmmm
+
+  
   status_led_rx_on(TRUE);
 
   pending_packets = 1;

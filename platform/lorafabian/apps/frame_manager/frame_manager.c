@@ -209,7 +209,7 @@ PROCESS_THREAD(lorafab_bcn_process, ev, data) {
           printf("Error: buffer is too small for headers");
         else {
           //For the arduino
-          int packetSize = size + frame.header_len;
+          int packetSize = size + frame.header_len; //with fake header
           //Verify the destination of a message
           bool br_msg = is_broadcast_addr(&frame);
           bool my_mac = is_my_mac(&frame);
@@ -220,7 +220,8 @@ PROCESS_THREAD(lorafab_bcn_process, ev, data) {
           }
           else if(my_mac) {
             printf("Message is for me");
-            set_arduino_read_buf(frame.payload, frame.payload_len);
+            //always send the whole thing 
+            set_arduino_read_buf(frame.packet, packetSize);
            }
           else {
             printf("Message is not for me");

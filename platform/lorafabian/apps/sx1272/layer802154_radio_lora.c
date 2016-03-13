@@ -43,10 +43,14 @@ layer802154_read()
   uint8_t* datapb = packetbuf_dataptr();
   frame802154_lora_t frame;
   packetbuf_set_datalen(PACKETBUF_CONF_SIZE); //Because we don't know the size of the packet
-  int size = lora_radio_driver.read(datapb, packetbuf_totlen());
+  int size = lora_radio_driver.read(datapb, packetbuf_totlen()); //the
+                                                                 //size
+                                                                 //with
+                                                                 //fake 
   packetbuf_set_datalen(size); //Adjust the size
   int headerSize = frame802154_lora_parse(datapb, size, &frame);
-  frame.payload_len = size-headerSize;
+  frame.payload_len = size-headerSize; //twice setting the payload_len
+                                       //(once in parse)
   frame.header_len = headerSize;
   return frame;
 }

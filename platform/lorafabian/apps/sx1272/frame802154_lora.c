@@ -80,10 +80,16 @@ frame802154_lora_parse(uint8_t *data, int len, frame802154_lora_t *pf)
   if(len < MIN_FRAME_LENGTH)
     return -1;
 
-  pf->packet = data;
-  p = data;
-
+  pf->packet = data; 
+  p = data; 
+            
+  pf->rssi = p[0];
+  pf->snr = p[1];
+  p += sizeof(pf->snr)+ sizeof(pf->rssi); //skip rss and snr to
+                                          //calculate the fcf
+  
   //decode the FCF
+  //ovo je  ok
   fcf._0_2_frame_type = (p[0] & (0b00100000)) >> 5;
   fcf._3_security_enabled = (p[0] & (0b00010000)) >> 4;
   fcf._4_frame_pending = (p[0] & (0b00001000)) >> 3;
@@ -114,10 +120,10 @@ frame802154_lora_parse(uint8_t *data, int len, frame802154_lora_t *pf)
     pf->src_addr[j] = p[i+j];
   p+= dstAddSize + srcAddSize;
     
-  //header length
+  //header length, including fake header
   c = p - data;
   //payload length
-  pf->payload_len = (len - c);
+  pf->payload_len = (len - c); // len = len of whole packet with fake header
   //payload
   pf->payload = p;
 

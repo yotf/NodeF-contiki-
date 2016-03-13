@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#define MIN_FRAME_LENGTH 13  //For header
+#define MIN_FRAME_LENGTH 15  //For header
 #define ADDRESS_0b_LENGTH 0
 #define ADDRESS_16b_LENGTH 2
 #define ADDRESS_64b_LENGTH 3
@@ -36,10 +36,18 @@ typedef struct {
   uint8_t seq;                //Sequence number
   uint8_t dest_addr[8];       //Destination address
   uint8_t src_addr[8];        //Source address
+  int8_t rssi;                //Received Signal Strength
+  int8_t snr;                 //Signal to noise ratio
   uint8_t *payload;           //Pointer to 802.15.4 frame payload
   uint8_t *packet;            //Pointer to all the packet
   int payload_len;            //Length of payload field
-  int header_len;             //Length of header (-1 if an error occurs)
+  int header_len;             //Length of header (-1 if an error
+                              //occurs)
+
+
+
+
+
 } frame802154_lora_t;
 
 /**
